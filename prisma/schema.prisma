@@ -11,10 +11,59 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  username  String   @unique
-  password  String
+  id          String        @id @default(uuid())
+  email       String        @unique
+  username    String        @unique
+  password    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Transaction Transaction[]
+}
+
+model Transaction {
+  id            String          @id @default(uuid())
+  name          String
+  amount        Float
+  paymentMethod PaymentMethod
+  location      String?
+  type          TransactionType
+  entity        EntityType
+  note          String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Transaction Transaction[]
+}
+
+// emun type
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+// enum entity
+enum EntityType {
+  COMPANY
+  PERSON
+}
+
+// enum paymentMethod
+enum PaymentMethod {
+  CASH
+  CREDIT
+  DEBIT
 }
