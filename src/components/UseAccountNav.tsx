@@ -2,12 +2,17 @@
 
 import { signOut } from "next-auth/react";
 import { Button } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export function UseAccountNav() {
+interface UseAccountNavProps {
+  user: any;
+}
+
+export function UseAccountNav({ user }: UseAccountNavProps) {
   return (
     <div>
-      <Button
-        variant={"destructive"}
+      <button
+        className="flex flex-col items-center"
         onClick={() =>
           signOut({
             redirect: true,
@@ -15,8 +20,12 @@ export function UseAccountNav() {
           })
         }
       >
-        SingOut
-      </Button>
+        <Avatar>
+          <AvatarImage src={user} />
+          <AvatarFallback>CL</AvatarFallback>
+        </Avatar>
+        <small className="text-xs">Sair</small>
+      </button>
     </div>
   );
 }

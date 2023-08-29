@@ -1,12 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,38 +12,68 @@ model User {
   email       String        @unique
   username    String        @unique
   password    String
+  avatarUrl   String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  Transaction Transaction[]
+  transaction Transaction[]
 }
 
 model Transaction {
   id            String          @id @default(uuid())
-  name          String
-  amount        Float
-  paymentMethod PaymentMethod
-  location      String?
   type          TransactionType
   entity        EntityType
-  note          String?
+  paymentMethod PaymentMethod
+  recurring     Recurring?
+  name          String
+  amount        Float
+  location      String?
+  notes         String?
+  receipt       String?
+  bankAccount   String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  User                User?                 @relation(fields: [userId], references: [id])
+  userId              String?
+  categories          Category[]            @relation("TransactionCategory")
+  TransactionCategory TransactionCategory[]
 }
 
 model Category {
-  id   String @id @default(uuid())
-  name String @unique
+  id           String        @id @default(uuid())
+  name         String
+  color        String        @default("#000000")
+  icon         String        @default("/category/archive.svg")
+  transactions Transaction[] @relation("TransactionCategory")
+
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  TransactionCategory TransactionCategory[]
+}
+
+model TransactionCategory {
+  id            String      @id @default(uuid())
+  transactionId String
+  categoryId    String
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  category      Category    @relation(fields: [categoryId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
-  Transaction Transaction[]
+model Fuel {
+  id      String   @id @default(uuid())
+  brand   String
+  amount  Float
+  priceLt Float
+  liters  Float
+  kms     Int
+  type    FuelType
+  note    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // emun type
@@ -66,4 +93,17 @@ enum PaymentMethod {
   CASH
   CREDIT
   DEBIT
+}
+
+enum Recurring {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum FuelType {
+  GASOLEO
+  GASOLINA
+  GPL
 }

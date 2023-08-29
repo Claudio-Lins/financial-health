@@ -70,3 +70,25 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export async function GET(req: Request) {
+  try {
+    const users = await prisma.user.findMany();
+    return NextResponse.json(
+      {
+        users,
+        message: "users found",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        users: null,
+        message: "error",
+      },
+      { status: 500 }
+    );
+  }
+}
