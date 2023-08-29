@@ -1,14 +1,14 @@
-import { cn } from "@/lib/utils";
-import { CheckCircle, ArrowUpCircleIcon } from "lucide-react";
-import React from "react";
+import { cn } from "@/lib/utils"
+import { CheckCircle, ArrowUpCircleIcon } from "lucide-react"
+import dayjs from "dayjs"
 
 interface SummaryCardProps {
-  label: string;
-  totalAmount: number;
-  dailyGoal: number;
+  label: string
+  totalAmount: string
+  dailyGoal: string
 }
 
-export function SummaryCard({
+export async function SummaryCard({
   label,
   totalAmount,
   dailyGoal,
@@ -33,5 +33,5 @@ export function SummaryCard({
         />
       </div>
     </div>
-  );
+  )
 }

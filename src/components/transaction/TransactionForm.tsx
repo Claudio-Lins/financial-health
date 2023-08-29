@@ -28,6 +28,7 @@ import { Location } from "./Location"
 import { Category, User } from "@/@types"
 import { Badge } from "../ui/badge"
 import { CheckboxCategory } from "../ui/checkboxCategory"
+import { DatePickerDemo } from "./DatePicker"
 
 const transactionFormSchema = z.object({
   amount: z.number().min(1, {
@@ -44,6 +45,7 @@ const transactionFormSchema = z.object({
   bankAccount: z.string(),
   categories: z.array(z.string()),
   userId: z.string(),
+  createdAt: z.date(),
 })
 interface TransactioFormProps {
   categories: Category[]
@@ -70,6 +72,7 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
       bankAccount: "Millenium",
       categories: [],
       userId: user.id,
+      createdAt: new Date(),
     },
   })
 
@@ -108,26 +111,48 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
                       name="amount"
                       render={({ field }) => (
                         <>
-                          <FormItem className="flex flex-col justify-center items-center">
-                            <FormControl>
-                              <Input
-                                {...field}
-                                type="number"
-                                value={
-                                  field.value === undefined ? "" : field.value
-                                }
-                                placeholder="0.00 €"
-                                onChange={(event) =>
-                                  field.onChange(+event.target.value)
-                                }
-                                className="w-1/2 h-20 bg-white backdrop-blur-md bg-opacity-40 text-3xl text-center font-bold text-emerald-600"
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              Valor da transação
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
+                          <div className="flex w-full items-center">
+                            <FormField
+                              control={form.control}
+                              name="createdAt"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-col justify-center items-center">
+                                  <FormControl>
+                                    <DatePickerDemo
+                                      {...field}
+                                      selected={field.value}
+                                      onChange={(date) => field.onChange(date)}
+                                      className="w-1/2 h-20 bg-white backdrop-blur-md bg-opacity-40 text-3xl text-center font-bold text-emerald-600"
+                                    />
+                                  </FormControl>
+                                  <FormDescription>
+                                    Data da transação
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormItem className="flex flex-col justify-center items-center">
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  type="number"
+                                  value={
+                                    field.value === undefined ? "" : field.value
+                                  }
+                                  placeholder="0.00 €"
+                                  onChange={(event) =>
+                                    field.onChange(+event.target.value)
+                                  }
+                                  className="w-1/2 h-20 bg-white backdrop-blur-md bg-opacity-40 text-3xl text-center font-bold text-emerald-600"
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Valor da transação
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          </div>
                         </>
                       )}
                     />

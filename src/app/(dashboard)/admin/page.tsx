@@ -5,11 +5,10 @@ import { SummaryCard } from "@/components/SummaryCard"
 import { authOptions } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { getServerSession } from "next-auth"
-import React from "react"
+import dayjs from "dayjs"
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
-
   const categories = await prisma.category.findMany()
   const user = await prisma.user.findMany()
 
@@ -20,13 +19,65 @@ export default async function AdminPage() {
       </div>
     )
   }
+
+  const transactionToday = await prisma?.transaction.findMany({
+    where: {
+      createdAt: {
+        gte: dayjs().startOf("day").toDate(),
+        lte: dayjs().endOf("day").toDate(),
+      },
+    },
+  })
+  const transactionWeek = await prisma?.transaction.findMany({
+    where: {
+      createdAt: {
+        gte: dayjs().startOf("week").toDate(),
+        lte: dayjs().endOf("week").toDate(),
+      },
+    },
+  })
+
+  const transactionMonth = await prisma?.transaction.findMany({
+    where: {
+      createdAt: {
+        gte: dayjs().startOf("month").toDate(),
+        lte: dayjs().endOf("month").toDate(),
+      },
+    },
+  })
+
+  const totalAmount = {
+    today: transactionToday.reduce((acc, curr) => acc + curr.amount, 0),
+    week: transactionWeek.reduce((acc, curr) => acc + curr.amount, 0),
+    month: transactionMonth.reduce((acc, curr) => acc + curr.amount, 0),
+  }
+
+  function currency(amount: number) {
+    return new Intl.NumberFormat("en-PT", {
+      style: "currency",
+      currency: "EUR",
+    }).format(amount)
+  }
+
   return (
-    <div className="flex flex-col items-center gap-2 md:gap-6 h-screen">
+    <div className="flex pt-20 flex-col items-center gap-2 md:gap-6 h-screen">
       <CurrentWeek />
       <div className="flex w-full items-center justify-between md:justify-evenly gap-2 mt-2">
-        <SummaryCard label="Today" totalAmount={150} dailyGoal={160} />
-        <SummaryCard label="Week" totalAmount={800} dailyGoal={801} />
-        <SummaryCard label="Month" totalAmount={3000} dailyGoal={160} />
+        <SummaryCard
+          label="Today"
+          totalAmount={currency(totalAmount.today)}
+          dailyGoal={"160"}
+        />
+        <SummaryCard
+          label="Week"
+          totalAmount={currency(totalAmount.week)}
+          dailyGoal={"801"}
+        />
+        <SummaryCard
+          label="Month"
+          totalAmount={currency(totalAmount.month)}
+          dailyGoal={"160"}
+        />
       </div>
       <Footer categories={categories} user={user} />
     </div>

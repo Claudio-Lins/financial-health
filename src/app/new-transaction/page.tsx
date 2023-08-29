@@ -1,13 +1,9 @@
-import { Sidebar } from "@/components/transaction/Sidebar"
 import { TransactionForm } from "@/components/transaction/TransactionForm"
-import { Button } from "@/components/ui/button"
 import React from "react"
 import prisma from "@/lib/prisma"
 import { Category } from "@/@types"
 
-interface NewTransactionProps {
-  categories: Category[]
-}
+interface NewTransactionProps {}
 
 export default async function NewTransaction() {
   const categories = await prisma.category.findMany()
