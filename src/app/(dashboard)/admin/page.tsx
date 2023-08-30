@@ -47,9 +47,24 @@ export default async function AdminPage() {
   })
 
   const totalAmount = {
-    today: transactionToday.reduce((acc, curr) => acc + curr.amount, 0),
-    week: transactionWeek.reduce((acc, curr) => acc + curr.amount, 0),
-    month: transactionMonth.reduce((acc, curr) => acc + curr.amount, 0),
+    todayIncome: transactionToday
+      .filter((transaction) => transaction.type === "INCOME")
+      .reduce((acc, curr) => acc + curr.amount, 0),
+    todayExpense: transactionToday
+      .filter((transaction) => transaction.type === "EXPENSE")
+      .reduce((acc, curr) => acc + curr.amount, 0),
+    weekIncome: transactionWeek
+      .filter((transaction) => transaction.type === "INCOME")
+      .reduce((acc, curr) => acc + curr.amount, 0),
+    weekExpense: transactionWeek
+      .filter((transaction) => transaction.type === "EXPENSE")
+      .reduce((acc, curr) => acc + curr.amount, 0),
+    monthIncome: transactionMonth
+      .filter((transaction) => transaction.type === "INCOME")
+      .reduce((acc, curr) => acc + curr.amount, 0),
+    monthExpense: transactionMonth
+      .filter((transaction) => transaction.type === "EXPENSE")
+      .reduce((acc, curr) => acc + curr.amount, 0),
   }
 
   function currency(amount: number) {
@@ -65,17 +80,23 @@ export default async function AdminPage() {
       <div className="flex w-full items-center justify-between md:justify-evenly gap-2 mt-2">
         <SummaryCard
           label="Today"
-          totalAmount={currency(totalAmount.today)}
+          totalAmount={currency(
+            totalAmount.todayIncome - totalAmount.todayExpense
+          )}
           dailyGoal={"160"}
         />
         <SummaryCard
           label="Week"
-          totalAmount={currency(totalAmount.week)}
+          totalAmount={currency(
+            totalAmount.weekIncome - totalAmount.weekExpense
+          )}
           dailyGoal={"801"}
         />
         <SummaryCard
           label="Month"
-          totalAmount={currency(totalAmount.month)}
+          totalAmount={currency(
+            totalAmount.monthIncome - totalAmount.monthExpense
+          )}
           dailyGoal={"160"}
         />
       </div>

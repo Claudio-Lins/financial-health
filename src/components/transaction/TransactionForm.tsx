@@ -29,6 +29,10 @@ import { Category, User } from "@/@types"
 import { Badge } from "../ui/badge"
 import { CheckboxCategory } from "../ui/checkboxCategory"
 import { DatePickerDemo } from "./DatePicker"
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { cn } from "@/lib/utils"
+import { CalendarIcon } from "lucide-react"
+import { Calendar } from "../ui/calendar"
 
 const transactionFormSchema = z.object({
   amount: z.number().min(1, {
@@ -45,7 +49,7 @@ const transactionFormSchema = z.object({
   bankAccount: z.string(),
   categories: z.array(z.string()),
   userId: z.string(),
-  createdAt: z.date(),
+  createdAt: z.coerce.date(),
 })
 interface TransactioFormProps {
   categories: Category[]
@@ -54,13 +58,12 @@ interface TransactioFormProps {
 type TransactionFormData = z.infer<typeof transactionFormSchema>
 
 export function TransactionForm({ categories, user }: TransactioFormProps) {
-  const [dados, setDados] = useState([])
   const router = useRouter()
 
   const form = useForm<z.infer<typeof transactionFormSchema>>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
-      amount: 10,
+      amount: undefined,
       name: "Almoço",
       type: "EXPENSE",
       entity: "COMPANY",
@@ -76,8 +79,10 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
     },
   })
 
+  const createdAt = new Date()
+  const portugalDate = createdAt.toLocaleDateString("pt-PT")
+
   async function onSubmit(values: z.infer<typeof transactionFormSchema>) {
-    // create transaction
     const response = await fetch("/api/transaction", {
       method: "POST",
       headers: {
@@ -89,6 +94,8 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
       title: "Transação criada com sucesso",
     })
     router.push("/admin")
+    form.reset()
+    setStep(1)
   }
 
   const { setStep, step } = useSidebarStpsStore()
@@ -106,56 +113,57 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
               <div className="flex h-full flex-col justify-between md:w-[505px]">
                 {step === 1 && (
                   <div className="">
-                    <FormField
-                      control={form.control}
-                      name="amount"
-                      render={({ field }) => (
-                        <>
-                          <div className="flex w-full items-center">
-                            <FormField
-                              control={form.control}
-                              name="createdAt"
-                              render={({ field }) => (
-                                <FormItem className="flex flex-col justify-center items-center">
-                                  <FormControl>
-                                    <DatePickerDemo
-                                      {...field}
-                                      selected={field.value}
-                                      onChange={(date) => field.onChange(date)}
-                                      className="w-1/2 h-20 bg-white backdrop-blur-md bg-opacity-40 text-3xl text-center font-bold text-emerald-600"
-                                    />
-                                  </FormControl>
-                                  <FormDescription>
-                                    Data da transação
-                                  </FormDescription>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormItem className="flex flex-col justify-center items-center">
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  type="number"
-                                  value={
-                                    field.value === undefined ? "" : field.value
-                                  }
-                                  placeholder="0.00 €"
-                                  onChange={(event) =>
-                                    field.onChange(+event.target.value)
-                                  }
-                                  className="w-1/2 h-20 bg-white backdrop-blur-md bg-opacity-40 text-3xl text-center font-bold text-emerald-600"
-                                />
-                              </FormControl>
-                              <FormDescription>
-                                Valor da transação
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          </div>
-                        </>
-                      )}
-                    />
+                    <div className="flex flex-col gap-2">
+                      <FormField
+                        control={form.control}
+                        name="amount"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col justify-center items-center">
+                            <FormControl>
+                              <Input
+                                {...field}
+                                type="number"
+                                value={
+                                  field.value === undefined ? "" : field.value
+                                }
+                                placeholder="0.00 €"
+                                onChange={(event) =>
+                                  field.onChange(+event.target.value)
+                                }
+                                className="w-1/2 h-20 bg-white backdrop-blur-md bg-opacity-40 text-3xl text-center font-bold text-emerald-600"
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="createdAt"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col justify-center items-center">
+                            <FormControl>
+                              <input
+                                {...field}
+                                type="date"
+                                value={
+                                  field.value === undefined
+                                    ? ""
+                                    : field.value.toISOString().split("T")[0]
+                                }
+                                onChange={(event) =>
+                                  field.onChange(
+                                    new Date(event.target.value.toString())
+                                  )
+                                }
+                                className="w-1/2 h-10 rounded-md border border-gray-300 px-2"
+                              />
+                            </FormControl>
+                            <FormDescription>Data da transação</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     <Separator className="my-4" />
                     <FormField
                       control={form.control}
