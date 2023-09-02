@@ -28,7 +28,7 @@ export default function RootLayout({
         <Provider>
           <main className=" ">
             <Toaster />
-            {/* <Navbar /> */}
+            <Navbar />
             <div className="w-full min-h-screen">{children}</div>
           </main>
         </Provider>
