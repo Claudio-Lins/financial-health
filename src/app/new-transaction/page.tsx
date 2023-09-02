@@ -13,7 +13,7 @@ export default async function NewTransaction() {
   }
 
   return (
-    <div className="w-full max-h-screen">
+    <div className="w-full h-screen flex">
       <TransactionForm categories={categories} user={user} />
     </div>
   )

@@ -19,17 +19,17 @@ model User {
 }
 
 model Transaction {
-  id            String          @id @default(uuid())
-  type          TransactionType
-  entity        EntityType
-  paymentMethod PaymentMethod
-  recurring     Recurring?
-  name          String
-  amount        Float
-  location      String?
-  notes         String?
-  receipt       String?
-  bankAccount   String?
+  id     String          @id @default(uuid())
+  type   TransactionType
+  // entity        EntityType
+  // paymentMethod PaymentMethod
+  // recurring     Recurring?
+  name   String
+  amount Float
+  // location      String?
+  // notes         String?
+  // receipt       String?
+  // bankAccount   String?
 
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
@@ -62,33 +62,33 @@ model TransactionCategory {
   updatedAt DateTime @updatedAt
 }
 
-model Fuel {
-  id      String   @id @default(uuid())
-  brand   String
-  amount  Float
-  priceLt Float
-  liters  Float
-  kms     Int
-  type    FuelType
-  note    String?
+// model Fuel {
+//   id      String   @id @default(uuid())
+//   brand   String
+//   amount  Float
+//   priceLt Float
+//   liters  Float
+//   kms     Int
+//   type    FuelType
+//   note    String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
 
-// emun type
+// // emun type
 enum TransactionType {
   INCOME
   EXPENSE
 }
 
-// enum entity
+// // enum entity
 enum EntityType {
   COMPANY
   PERSON
 }
 
-// enum paymentMethod
+// // enum paymentMethod
 enum PaymentMethod {
   CASH
   CREDIT

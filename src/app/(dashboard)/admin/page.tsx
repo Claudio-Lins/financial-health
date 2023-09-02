@@ -75,9 +75,9 @@ export default async function AdminPage() {
   }
 
   return (
-    <div className="flex pt-20 flex-col items-center gap-2 md:gap-6 h-screen">
+    <div className="flex flex-col items-center gap-2 md:gap-6 h-screen">
       <CurrentWeek />
-      <div className="flex w-full items-center justify-between md:justify-evenly gap-2 mt-2">
+      <div className="flex w-full items-center justify-evenly gap-2 mt-2">
         <SummaryCard
           label="Today"
           totalAmount={currency(

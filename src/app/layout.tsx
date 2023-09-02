@@ -23,14 +23,13 @@ export default function RootLayout({
   return (
     <html lang="pt">
       <body
-        className={`${inter.className} bg-[url('/bg/bg-rainbow.jpg')] bg-cover bg-center bg-no-repeat w-full min-h-screen`}
+        className={`${inter.className} bg-[url('/bg/bg-rainbow.jpg')] bg-cover bg-center bg-no-repeat`}
       >
         <Provider>
-          <main className=" flex flex-col items-center">
+          <main className=" ">
             <Toaster />
-            <Navbar />
-            <ModalProvider>{children}</ModalProvider>
-            {/* <Footer /> */}
+            {/* <Navbar /> */}
+            <div className="w-full min-h-screen">{children}</div>
           </main>
         </Provider>
       </body>
