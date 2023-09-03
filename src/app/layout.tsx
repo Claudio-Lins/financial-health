@@ -5,6 +5,9 @@ import { Inter } from "next/font/google"
 import { Toaster } from "@/components/ui/toaster"
 import { Provider } from "@/providers/SessionProvider"
 import { Footer } from "@/components/Footer"
+import { authOptions } from "@/lib/auth"
+import { getServerSession } from "next-auth"
+import prisma from "@/lib/prisma"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,6 +21,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const session = await getServerSession(authOptions)
+  const user = await prisma.user.findFirst()
   return (
     <html lang="pt">
       <body
@@ -28,7 +33,7 @@ export default async function RootLayout({
             <Toaster />
             {/* <Navbar /> */}
             <div className="w-full min-h-screen py-4">{children}</div>
-            <Footer />
+            <Footer session={session} />
           </main>
         </Provider>
       </body>
