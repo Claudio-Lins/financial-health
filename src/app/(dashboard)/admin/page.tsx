@@ -6,6 +6,8 @@ import { authOptions } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import dayjs from "dayjs"
+import { useSelectedDateStore } from "@/context/selescted-date-store"
+import { SelectedDay } from "@/components/SelectedDate"
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
@@ -100,6 +102,7 @@ export default async function AdminPage() {
           dailyGoal={"160"}
         />
       </div>
+      <SelectedDay />
     </div>
   )
 }
