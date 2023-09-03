@@ -7,13 +7,9 @@ import { Category } from "@/@types"
 import { User } from "@prisma/client"
 import Link from "next/link"
 
-interface FooterProps {
-  categories: Category[]
-  user: User[]
-}
+interface FooterProps {}
 
-export function Footer({ categories, user }: FooterProps) {
-  const { setShowModalEntrance, showModalEntrance } = useModalEntranceStore()
+export function Footer() {
   return (
     <div className="fixed bottom-0 bg-white backdrop-blur w-full h-14 rounded-b-xl flex items-center p-2 justify-center">
       <div className="flex items-center justify-evenly px-2 gap-2 w-full max-w-md">
@@ -36,12 +32,6 @@ export function Footer({ categories, user }: FooterProps) {
           <LogOut className="w-6 h-6 font-medium " />
         </button>
       </div>
-      <ModalEntrace
-        categories={categories}
-        user={user}
-        title={"Entrada"}
-        description={"Entrada de dados."}
-      />
     </div>
   )
 }

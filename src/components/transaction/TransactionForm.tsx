@@ -10,28 +10,10 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Separator } from "../ui/separator"
-import { Checkbox } from "@/components/ui/checkbox"
 import { useRouter } from "next/navigation"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { InputRadio } from "./InputRadio"
-
-import { Recurring } from "./Recurring"
-import { Location } from "./Location"
 import { Category, User } from "@/@types"
-import { Badge } from "../ui/badge"
-import { DatePickerDemo } from "./DatePicker"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { cn } from "@/lib/utils"
-import { CalendarIcon, PlusCircle } from "lucide-react"
-import { Calendar } from "../ui/calendar"
+import { MinusCircle, PlusCircle } from "lucide-react"
+import { FormCategory } from "./FormCategory"
 
 const transactionFormSchema = z.object({
   amount: z.number(),
@@ -55,6 +37,8 @@ interface TransactioFormProps {
 type TransactionFormData = z.infer<typeof transactionFormSchema>
 
 export function TransactionForm({ categories, user }: TransactioFormProps) {
+  const [formCategory, setFormCategory] = useState(false)
+  const [categoryName, setCategoryName] = useState("")
   const router = useRouter()
 
   const {
@@ -104,7 +88,25 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
     reset()
   }
 
-  // const { setStep, step } = useSidebarStpsStore()
+  async function createCategory() {
+    try {
+      await fetch("/api/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: categoryName }),
+      })
+      toast({
+        title: "Categoria criada com sucesso",
+      })
+      router.refresh()
+      setFormCategory(false)
+      setCategoryName("")
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className=" flex flex-col gap-4 w-full p-4">
@@ -155,30 +157,59 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
               <label htmlFor="income">Receita</label>
             </div>
           </div>
-          <div className="p-4 w-full flex flex-wrap gap-3 justify-evenly border rounded-lg">
-            <span className="block text-center w-full font-bold text-xl">
-              Categoria
-            </span>
-            {categories.map((categoty) => {
-              return (
-                <div
-                  key={categoty.id}
-                  className="flex items-center gap-1 border justify-between px-2 py-1 rounded-lg shadow-sm "
+          <div className="p-4  border rounded-lg">
+            <div className="w-full flex flex-wrap gap-3 justify-evenly">
+              <span className="block text-center w-full font-bold text-xl">
+                Categoria
+              </span>
+              {categories.map((categoty) => {
+                return (
+                  <div
+                    key={categoty.id}
+                    className="flex items-center gap-1 border justify-between px-2 py-1 rounded-lg shadow-sm "
+                  >
+                    <input
+                      className="w-5 h-5 rounded-md"
+                      type="checkbox"
+                      id={categoty.name}
+                      value={categoty.id}
+                      {...register("categories")}
+                    />
+                    <label htmlFor={categoty.name}>{categoty.name}</label>
+                  </div>
+                )
+              })}
+              <div className="flex flex-col">
+                <Button
+                  onClick={() => setFormCategory(!formCategory)}
+                  variant={"ghost"}
                 >
-                  <input
-                    className="w-5 h-5 rounded-md"
-                    type="checkbox"
-                    id={categoty.name}
-                    value={categoty.id}
-                    {...register("categories")}
+                  {formCategory ? <MinusCircle /> : <PlusCircle />}
+                </Button>
+              </div>
+            </div>
+            {formCategory && (
+              <div className="mt-4">
+                <div className="flex flex-col gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Nome da categoria"
+                    value={categoryName}
+                    onChange={(e) => setCategoryName(e.target.value)}
                   />
-                  <label htmlFor={categoty.name}>{categoty.name}</label>
+                  <Separator />
+                  <div className="flex justify-between">
+                    <button
+                      onClick={createCategory}
+                      type="button"
+                      className="w-full"
+                    >
+                      Criar
+                    </button>
+                  </div>
                 </div>
-              )
-            })}
-            <button>
-              <PlusCircle />
-            </button>
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-auto flex items-center justify-between space-x-4">

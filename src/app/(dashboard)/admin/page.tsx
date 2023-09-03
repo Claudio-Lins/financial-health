@@ -100,7 +100,6 @@ export default async function AdminPage() {
           dailyGoal={"160"}
         />
       </div>
-      <Footer categories={categories} user={user} />
     </div>
   )
 }
