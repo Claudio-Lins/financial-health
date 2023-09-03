@@ -1,13 +1,12 @@
 import { CurrentWeek } from "@/components/CurrentWeek"
-import { DayCard } from "@/components/DayCard"
-import { Footer } from "@/components/Footer"
 import { SummaryCard } from "@/components/SummaryCard"
 import { authOptions } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import dayjs from "dayjs"
-import { useSelectedDateStore } from "@/context/selescted-date-store"
 import { SelectedDay } from "@/components/SelectedDate"
+import { SummaryCardWeek } from "@/components/SummaryCardWeek"
+import { SummaryCardDay } from "@/components/SummaryCardDay"
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
@@ -21,6 +20,8 @@ export default async function AdminPage() {
       </div>
     )
   }
+
+  const transaction = await prisma.transaction.findMany()
 
   const transactionToday = await prisma?.transaction.findMany({
     where: {
@@ -80,15 +81,15 @@ export default async function AdminPage() {
     <div className="flex flex-col items-center gap-2 md:gap-6 h-screen">
       <CurrentWeek />
       <div className="flex w-full items-center justify-evenly gap-2 mt-2">
-        <SummaryCard
-          label="Today"
-          totalAmount={currency(
-            totalAmount.todayIncome - totalAmount.todayExpense
-          )}
-          dailyGoal={"160"}
+        <SummaryCardDay
+          transactionToday={transactionToday}
+          transaction={transaction}
+          // totalAmount={currency(
+          //   totalAmount.todayIncome - totalAmount.todayExpense
+          // )}
+          dailyGoal={160}
         />
-        <SummaryCard
-          label="Week"
+        <SummaryCardWeek
           totalAmount={currency(
             totalAmount.weekIncome - totalAmount.weekExpense
           )}
@@ -103,6 +104,11 @@ export default async function AdminPage() {
         />
       </div>
       <SelectedDay />
+      <pre>
+        <code>
+          {JSON.stringify(transactionMonth[0].createdAt, null, 2).slice(9, 11)}
+        </code>
+      </pre>
     </div>
   )
 }
