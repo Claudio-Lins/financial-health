@@ -24,7 +24,7 @@ export function Footer({ session }: FooterProps) {
         <button className=" rounded-full flex items-center justify-center p-2 ">
           <Fuel className="w-6 h-6 font-medium " />
         </button>
-        <button className=" rounded-full flex items-center justify-center p-2 ">
+        <div className=" rounded-full flex items-center justify-center p-2 ">
           {session?.user ? (
             <User2 className="w-6 h-6 font-medium " />
           ) : (
@@ -32,7 +32,7 @@ export function Footer({ session }: FooterProps) {
               <LogIn className="w-6 h-6 font-medium" />
             </Link>
           )}
-        </button>
+        </div>
         <Link
           href="/new-transaction"
           className=" rounded-full flex items-center shadow-md bg-white justify-center p-2 -mt-10"
