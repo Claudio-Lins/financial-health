@@ -28,7 +28,7 @@ const transactionFormSchema = z.object({
   // bankAccount: z.string(),
   categories: z.array(z.string()),
   userId: z.string(),
-  // createdAt: z.coerce.date(),
+  createdAt: z.coerce.date(),
 })
 interface TransactioFormProps {
   categories: Category[]
@@ -53,6 +53,7 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
       name: "",
       type: "EXPENSE",
       userId: user.id,
+      createdAt: new Date(),
     },
   })
 
@@ -127,11 +128,20 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
         <div className="flex flex-col gap-4 bg-white backdrop-blur-sm bg-opacity-60 flex-1 rounded-lg shadow-sm  p-2">
           <div className="flex w-full justify-center mt-4">
             <input
-              className="w-1/2 h-20 text-center text-2xl font-bold"
+              className="w-1/2 h-20 text-center text-2xl font-bold rounded-lg"
               placeholder="€ 0,00"
               type="number"
               {...register("amount", {
                 valueAsNumber: true,
+              })}
+            />
+          </div>
+          <div className="flex w-full justify-center">
+            <input
+              type="date"
+              className="w-full h-10 rounded-lg"
+              {...register("createdAt", {
+                valueAsDate: true,
               })}
             />
           </div>

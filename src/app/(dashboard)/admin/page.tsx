@@ -103,12 +103,6 @@ export default async function AdminPage() {
           dailyGoal={"160"}
         />
       </div>
-      <SelectedDay />
-      <pre>
-        <code>
-          {JSON.stringify(transactionMonth[0].createdAt, null, 2).slice(9, 11)}
-        </code>
-      </pre>
     </div>
   )
 }
