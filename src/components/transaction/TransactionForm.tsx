@@ -27,7 +27,7 @@ const transactionFormSchema = z.object({
   // receipt: z.string(),
   // bankAccount: z.string(),
   categories: z.array(z.string()),
-  // userId: z.string(),
+  userId: z.string(),
   // createdAt: z.coerce.date(),
 })
 interface TransactioFormProps {
@@ -48,6 +48,12 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
     formState: { errors },
   } = useForm<z.infer<typeof transactionFormSchema>>({
     resolver: zodResolver(transactionFormSchema),
+    defaultValues: {
+      amount: undefined,
+      name: "",
+      type: "EXPENSE",
+      userId: user.id,
+    },
   })
 
   // const form = useForm<z.infer<typeof transactionFormSchema>>({
