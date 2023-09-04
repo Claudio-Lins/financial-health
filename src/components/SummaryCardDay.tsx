@@ -21,6 +21,8 @@ export function SummaryCardDay({
 }: SummaryCardDayProps) {
   const { daySelected, monthSelected } = useSelectedDateStore()
   const [todayIncome, setTodayIncome] = useState(0)
+  const [todayExpense, setTodayExpense] = useState(0)
+
   const selectedDate = dayjs().format("DD")
 
   // console.log(transaction[0].createdAt.toLocaleDateString().slice(0, 2))
@@ -36,7 +38,19 @@ export function SummaryCardDay({
       .reduce((acc, transaction) => {
         return acc + transaction.amount
       }, 0)
-    console.log("today income", todayIncome)
+
+    const todayExpense = transaction
+      .filter((transaction) => {
+        return (
+          transaction.createdAt.toLocaleDateString().slice(0, 2) === daySelected
+        )
+      })
+      .filter((transaction) => transaction.type === "EXPENSE")
+      .reduce((acc, transaction) => {
+        return acc + transaction.amount
+      }, 0)
+
+    setTodayExpense(todayExpense)
     setTodayIncome(todayIncome)
   }, [daySelected, transaction])
   // console.log(`month ${monthSelected}, day ${selectedDate}`)
@@ -62,7 +76,7 @@ export function SummaryCardDay({
         )} */}
       </div>
       <div className="flex flex-1 items-end justify-between w-full">
-        <span className="text-sm font-bold">{todayIncome}</span>
+        <span className="text-sm font-bold">{todayIncome - todayExpense}</span>
         <div
           className={cn(
             "w-[2.5px] mr-[6px] rounded-md h-14"
