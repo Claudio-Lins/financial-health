@@ -130,7 +130,7 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
             <input
               className="w-1/2 h-20 text-center text-2xl font-bold rounded-lg"
               placeholder="€ 0,00"
-              type="number"
+              type="tel"
               {...register("amount", {
                 valueAsNumber: true,
               })}
@@ -140,6 +140,7 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
             <input
               type="date"
               className="w-full h-10 rounded-lg"
+              defaultValue={portugalDate}
               {...register("createdAt", {
                 valueAsDate: true,
               })}
@@ -154,23 +155,35 @@ export function TransactionForm({ categories, user }: TransactioFormProps) {
             />
           </div>
           <div className="flex w-full justify-center gap-4">
-            <div className="flex items-center gap-2">
+            <div className="flex w-full items-center gap-2">
               <input
+                className="peer sr-only w-1/2"
                 type="radio"
                 id="expense"
                 value="EXPENSE"
                 {...register("type")}
               />
-              <label htmlFor="expense">Despesa</label>
+              <label
+                className="block w-full text-center rounded-lg border border-gray-200 p-3 text-gray-600 hover:border-black peer-checked:border-black peer-checked:bg-black peer-checked:text-white"
+                htmlFor="expense"
+              >
+                Despesa
+              </label>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex w-full items-center gap-2">
               <input
+                className="peer sr-only"
                 type="radio"
                 id="income"
                 value="INCOME"
                 {...register("type")}
               />
-              <label htmlFor="income">Receita</label>
+              <label
+                className="block w-full text-center rounded-lg border border-gray-200 p-3 text-gray-600 hover:border-black peer-checked:border-black peer-checked:bg-black peer-checked:text-white"
+                htmlFor="income"
+              >
+                Receita
+              </label>
             </div>
           </div>
           <div className="p-4  border rounded-lg">
