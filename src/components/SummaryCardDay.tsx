@@ -1,11 +1,12 @@
-"use client"
+'use client'
 
-import { cn } from "@/lib/utils"
-import { CheckCircle, ArrowUpCircleIcon } from "lucide-react"
-import dayjs from "dayjs"
-import { useSelectedDateStore } from "@/context/selescted-date-store"
-import { useEffect, useState } from "react"
-import { $Enums, Transaction } from "@prisma/client"
+import { cn } from '@/lib/utils'
+import { CheckCircle, ArrowUpCircleIcon } from 'lucide-react'
+import dayjs from 'dayjs'
+import { useSelectedDateStore } from '@/context/selescted-date-store'
+import { useEffect, useState } from 'react'
+import { $Enums, Transaction } from '@prisma/client'
+import { formatteCurrency } from '@/uteis/formatter'
 
 interface SummaryCardDayProps {
   // totalAmount: string
@@ -23,7 +24,7 @@ export function SummaryCardDay({
   const [todayIncome, setTodayIncome] = useState(0)
   const [todayExpense, setTodayExpense] = useState(0)
 
-  const selectedDate = dayjs().format("DD")
+  const selectedDate = dayjs().format('DD')
 
   // console.log(transaction[0].createdAt.toLocaleDateString().slice(0, 2))
 
@@ -34,7 +35,7 @@ export function SummaryCardDay({
           transaction.createdAt.toLocaleDateString().slice(0, 2) === daySelected
         )
       })
-      .filter((transaction) => transaction.type === "INCOME")
+      .filter((transaction) => transaction.type === 'INCOME')
       .reduce((acc, transaction) => {
         return acc + transaction.amount
       }, 0)
@@ -45,7 +46,7 @@ export function SummaryCardDay({
           transaction.createdAt.toLocaleDateString().slice(0, 2) === daySelected
         )
       })
-      .filter((transaction) => transaction.type === "EXPENSE")
+      .filter((transaction) => transaction.type === 'EXPENSE')
       .reduce((acc, transaction) => {
         return acc + transaction.amount
       }, 0)
@@ -53,7 +54,8 @@ export function SummaryCardDay({
     setTodayExpense(todayExpense)
     setTodayIncome(todayIncome)
   }, [daySelected, transaction])
-  // console.log(`month ${monthSelected}, day ${selectedDate}`)
+
+  const todalDaily = todayIncome - todayExpense
 
   return (
     <div className="bg-zinc-50 w-[100px] h-24 rounded-lg shadow-sm p-2 flex flex-col justify-between">
@@ -66,21 +68,23 @@ export function SummaryCardDay({
               </span>
             </>
           ) : (
-            "today"
+            'today'
           )}
         </span>
-        {/* {dailyGoal >= totalAmount ? (
-          <CheckCircle className={cn("w-4 h-4 text-green-600")} />
+        {dailyGoal < todalDaily ? (
+          <CheckCircle className={cn('w-4 h-4 text-green-600')} />
         ) : (
-          <ArrowUpCircleIcon className={cn("w-4 h-4 text-red-600")} />
-        )} */}
+          <ArrowUpCircleIcon className={cn('w-4 h-4 text-red-600')} />
+        )}
       </div>
       <div className="flex flex-1 items-end justify-between w-full">
-        <span className="text-sm font-bold">{todayIncome - todayExpense}</span>
+        <span className="text-sm font-bold">
+          {formatteCurrency(todalDaily)}
+        </span>
         <div
           className={cn(
-            "w-[2.5px] mr-[6px] rounded-md h-14"
-            // dailyGoal >= totalAmount ? "bg-green-600" : "bg-red-600"
+            'w-[2.5px] mr-[6px] rounded-md h-14',
+            dailyGoal < todalDaily ? 'bg-green-600' : 'bg-red-600'
           )}
         />
       </div>

@@ -1,5 +1,8 @@
 {
   // editor
+  "emmet.syntaxProfiles": {
+    "javascript": "jsx"
+  },
   "editor.wordWrap": "on",
   "editor.fontSize": 16,
   "editor.lineHeight": 30,
@@ -9,22 +12,18 @@
   "editor.minimap.enabled": false,
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
-
   // explorer
   "explorer.compactFolders": false,
-
   // workbench
   "workbench.editor.enablePreview": false,
   "workbench.iconTheme": "material-icon-theme",
   "workbench.colorTheme": "Dracula",
-
   // prettier
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.enable": true,
-  "prettier.singleQuote": false,
+  "prettier.singleQuote": true,
   "prettier.tabWidth": 2,
   "prettier.semi": false,
-
   // terminal
   "terminal.integrated.fontSize": 16,
   "terminal.integrated.profiles.windows": {
@@ -39,5 +38,15 @@
     "editor.defaultFormatter": "Prisma.prisma",
     "editor.formatOnSave": true
   },
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  // DIEGO FERNANDEZ
+  "breadcrumbs.enabled": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.codeActionsOnSaveTimeout": 1500,
+  "editor.codeActionsOnSaveMode": "all"
 }

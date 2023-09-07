@@ -1,12 +1,13 @@
-import { CurrentWeek } from "@/components/CurrentWeek"
-import { SummaryCard } from "@/components/SummaryCard"
-import { authOptions } from "@/lib/auth"
-import prisma from "@/lib/prisma"
-import { getServerSession } from "next-auth"
-import dayjs from "dayjs"
-import { SelectedDay } from "@/components/SelectedDate"
-import { SummaryCardWeek } from "@/components/SummaryCardWeek"
-import { SummaryCardDay } from "@/components/SummaryCardDay"
+import { CurrentWeek } from '@/components/CurrentWeek'
+import { SummaryCard } from '@/components/SummaryCard'
+import { authOptions } from '@/lib/auth'
+import prisma from '@/lib/prisma'
+import { getServerSession } from 'next-auth'
+import dayjs from 'dayjs'
+import { formatDate, formatteCurrency } from '@/uteis/formatter'
+import { SummaryCardWeek } from '@/components/SummaryCardWeek'
+import { SummaryCardDay } from '@/components/SummaryCardDay'
+import { SummaryCardMonth } from '@/components/SummaryCardMonth'
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
@@ -21,21 +22,25 @@ export default async function AdminPage() {
     )
   }
 
-  const transaction = await prisma.transaction.findMany()
+  const transaction = await prisma.transaction.findMany({
+    include: {
+      categories: true,
+    },
+  })
 
   const transactionToday = await prisma?.transaction.findMany({
     where: {
       createdAt: {
-        gte: dayjs().startOf("day").toDate(),
-        lte: dayjs().endOf("day").toDate(),
+        gte: dayjs().startOf('day').toDate(),
+        lte: dayjs().endOf('day').toDate(),
       },
     },
   })
   const transactionWeek = await prisma?.transaction.findMany({
     where: {
       createdAt: {
-        gte: dayjs().startOf("week").toDate(),
-        lte: dayjs().endOf("week").toDate(),
+        gte: dayjs().startOf('week').toDate(),
+        lte: dayjs().endOf('week').toDate(),
       },
     },
   })
@@ -43,37 +48,37 @@ export default async function AdminPage() {
   const transactionMonth = await prisma?.transaction.findMany({
     where: {
       createdAt: {
-        gte: dayjs().startOf("month").toDate(),
-        lte: dayjs().endOf("month").toDate(),
+        gte: dayjs().startOf('month').toDate(),
+        lte: dayjs().endOf('month').toDate(),
       },
     },
   })
 
   const totalAmount = {
     todayIncome: transactionToday
-      .filter((transaction) => transaction.type === "INCOME")
+      .filter((transaction) => transaction.type === 'INCOME')
       .reduce((acc, curr) => acc + curr.amount, 0),
     todayExpense: transactionToday
-      .filter((transaction) => transaction.type === "EXPENSE")
+      .filter((transaction) => transaction.type === 'EXPENSE')
       .reduce((acc, curr) => acc + curr.amount, 0),
     weekIncome: transactionWeek
-      .filter((transaction) => transaction.type === "INCOME")
+      .filter((transaction) => transaction.type === 'INCOME')
       .reduce((acc, curr) => acc + curr.amount, 0),
     weekExpense: transactionWeek
-      .filter((transaction) => transaction.type === "EXPENSE")
+      .filter((transaction) => transaction.type === 'EXPENSE')
       .reduce((acc, curr) => acc + curr.amount, 0),
     monthIncome: transactionMonth
-      .filter((transaction) => transaction.type === "INCOME")
+      .filter((transaction) => transaction.type === 'INCOME')
       .reduce((acc, curr) => acc + curr.amount, 0),
     monthExpense: transactionMonth
-      .filter((transaction) => transaction.type === "EXPENSE")
+      .filter((transaction) => transaction.type === 'EXPENSE')
       .reduce((acc, curr) => acc + curr.amount, 0),
   }
 
   function currency(amount: number) {
-    return new Intl.NumberFormat("en-PT", {
-      style: "currency",
-      currency: "EUR",
+    return new Intl.NumberFormat('en-PT', {
+      style: 'currency',
+      currency: 'EUR',
     }).format(amount)
   }
 
@@ -84,24 +89,38 @@ export default async function AdminPage() {
         <SummaryCardDay
           transactionToday={transactionToday}
           transaction={transaction}
-          // totalAmount={currency(
-          //   totalAmount.todayIncome - totalAmount.todayExpense
-          // )}
           dailyGoal={160}
         />
         <SummaryCardWeek
           totalAmount={currency(
             totalAmount.weekIncome - totalAmount.weekExpense
           )}
-          dailyGoal={"801"}
+          dailyGoal={'801'}
         />
-        <SummaryCard
-          label="Month"
+        <SummaryCardMonth
+          // label="Month"
           totalAmount={currency(
             totalAmount.monthIncome - totalAmount.monthExpense
           )}
-          dailyGoal={"160"}
+          dailyGoal={'160'}
         />
+      </div>
+      <div className="">
+        {transaction.map((item) => {
+          return (
+            <div
+              key={item.id}
+              className="flex items-center gap-4 border-b my-2"
+            >
+              {item.categories.map((category) => {
+                return <span key={category.id}>{category.name}</span>
+              })}
+              <span>{item.type}</span>
+              <span>{formatteCurrency(item.amount)}</span>
+              <span>{formatDate(item.createdAt)}</span>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

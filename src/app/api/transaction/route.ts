@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
-import { Transaction } from "@prisma/client"
+import dayjs from "dayjs"
 
 export async function GET(req: Request) {
   const transactions = await prisma.transaction.findMany({
@@ -15,15 +15,17 @@ export async function GET(req: Request) {
 export async function POST(request: NextRequest) {
   const body = await request.json()
 
-  const transaction = await prisma.transaction.create({
-    data: {
-      ...body,
-      categories: {
-        connect: body.categories.map((id: number) => ({ id })),
+  try {
+    const transaction = await prisma.transaction.create({
+      data: {
+        ...body,
+        categories: {
+          connect: body.categories.map((id: number) => ({ id })),
+        },
       },
-    },
-  })
-  console.log("aqui")
-
-  return NextResponse.json(transaction, { status: 201 })
+    })
+    return NextResponse.json(transaction, { status: 201 })
+  } catch (error) {
+    console.log(error)
+  }
 }
